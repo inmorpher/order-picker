@@ -16,7 +16,7 @@ interface Item {
 export default function RecommendedOrderList({ items }: { items: Item[] }) {
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState<'all' | 'selected' | 'needs'>('all');
-	const [needsFirst, setNeedsFirst] = useState(true);
+	const [needsFirst, setNeedsFirst] = useState(false);
 	const isHydrated = useSyncExternalStore(
 		() => () => {},
 		() => true,
