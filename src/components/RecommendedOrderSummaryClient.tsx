@@ -89,7 +89,9 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 						<div className='flex items-center justify-between gap-3'>
 							<div className='min-w-0'>
 								<p className='font-bold text-slate-900 dark:text-white truncate'>{item.description}</p>
-								<p className='text-xs text-slate-500'>Calculated quantity · {item.unit}</p>
+								<p className='text-xs text-slate-500'>
+									On hand: {onHand[item.externalId] ?? 0} {item.unit} · Calculated: {Math.ceil(Math.max(0, item.dailyUsage * deliveryDays - (onHand[item.externalId] ?? 0)))} {item.unit}
+								</p>
 							</div>
 							<div className='flex items-center gap-1'>
 								<button type='button' onClick={() => changeQuantity(item.externalId, item.quantity, -1)} className='w-9 h-9 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>

@@ -115,14 +115,19 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 									{item.dailyUsage} per day · {item.unit}
 								</p>
 							</button>
-							<div className='text-right shrink-0'>
+							<button
+								type='button'
+								onClick={() => setSelected(item.externalId, !item.selected)}
+								className='text-right shrink-0'
+								aria-pressed={item.selected}
+							>
 								<p className='text-[10px] font-bold uppercase tracking-widest text-slate-400'>
 									{item.selected ? 'Selected' : 'Tap to select'}
 								</p>
 								<p className={`font-black text-lg ${item.selected && item.quantity > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
 									{item.selected ? `${item.quantity} ${item.unit}` : '—'}
 								</p>
-							</div>
+							</button>
 						</div>
 						<div className='flex items-center justify-between mt-3'>
 							<span className='text-xs font-semibold text-slate-500'>On hand</span>
