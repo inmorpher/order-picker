@@ -74,7 +74,7 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 	if (!isHydrated) return null;
 
 	return (
-		<div className='flex flex-col gap-6 pb-32'>
+		<div className='flex flex-col gap-6 pb-8'>
 			<Link href='/recommended-order' className='flex items-center gap-2 text-sm font-bold text-slate-600 dark:text-slate-400'>
 				<ArrowLeft size={18} /> Back to selection
 			</Link>
@@ -149,7 +149,7 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 				</div>
 			</div>
 
-			<button type='button' onClick={handleSubmit} disabled={isSubmitting || !orderItems.some((item) => item.quantity > 0) || !ordererName.trim()} className='fixed bottom-0 left-0 right-0 mx-auto max-w-md m-4 flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black shadow-xl disabled:opacity-50'>
+			<button type='button' onClick={handleSubmit} disabled={isSubmitting || !orderItems.some((item) => item.quantity > 0) || !ordererName.trim()} className='w-full flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black shadow-xl disabled:opacity-50'>
 				{isSubmitting ? <Loader2 className='animate-spin' size={22} /> : <CheckCircle2 size={22} />}
 				SAVE RECOMMENDED ORDER
 			</button>
