@@ -6,6 +6,7 @@ export const items = sqliteTable('items', {
 	description: text('description').notNull(),
 	unit: text('unit').notNull(),
 	category: text('category'),
+	dailyUsage: real('daily_usage').default(0).notNull(),
 	isActive: integer('is_active', { mode: 'boolean' }).default(true).notNull(),
 });
 
@@ -17,6 +18,9 @@ export const orders = sqliteTable('orders', {
 		.default('completed')
 		.notNull(),
 	totalItemsCount: integer('total_items_count').notNull(),
+	orderType: text('order_type', { enum: ['standard', 'recommended'] })
+		.default('standard')
+		.notNull(),
 });
 
 export const orderItems = sqliteTable('order_items', {

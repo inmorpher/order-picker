@@ -105,6 +105,7 @@ order-picker/
 | Order History     | `/history`       | View all saved orders                    |
 | Order Details     | `/history/[id]`  | View specific order details              |
 | Product Manager   | `/items`         | Manage products (enable/disable)         |
+| Recommended Order | `/recommended-order` | Calculate quantities from daily usage and current stock |
 
 ## 🎯 Usage Flow
 
@@ -152,6 +153,7 @@ npm run lint       # Lint code with ESLint
 - `description` — Product name
 - `unit` — Unit of measure (CS, Case, BIB, etc.)
 - `category` — Product category (optional)
+- `daily_usage` — Estimated quantity used per day (defaults to 0)
 - `is_active` — Product status (true/false)
 
 ### `orders` Table
@@ -160,6 +162,7 @@ npm run lint       # Lint code with ESLint
 - `created_at` — Creation timestamp
 - `status` — Order status (draft, completed)
 - `total_items_count` — Total items in order
+- `order_type` — `standard` or `recommended`
 
 ### `order_items` Table (Order Contents)
 
