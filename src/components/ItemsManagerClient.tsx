@@ -2,13 +2,16 @@
 
 import { useState } from 'react';
 import { addItem, toggleItemStatus, updateDailyUsage } from '@/app/actions';
-import { Plus, Trash2, Eye, EyeOff, Package, Hash, Weight } from 'lucide-react';
+import Toast from '@/components/Toast';
+import { Plus, Eye, EyeOff, Package, Hash, Weight } from 'lucide-react';
+import { useMemo } from 'react';
 
 interface Item {
   id: number;
   externalId: string;
   description: string;
   unit: string;
+  category: string | null;
   dailyUsage: number;
   isActive: boolean;
 }
@@ -19,6 +22,14 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
   const [unit, setUnit] = useState('CS');
   const [isAdding, setIsAdding] = useState(false);
   const [usageValues, setUsageValues] = useState<Record<number, string>>({});
+  const [sortBy, setSortBy] = useState<'name' | 'category' | 'missing'>('name');
+  const [toast, setToast] = useState('');
+
+  const sortedItems = useMemo(() => [...initialItems].sort((a, b) => {
+    if (sortBy === 'missing') return Number(a.dailyUsage > 0) - Number(b.dailyUsage > 0);
+    if (sortBy === 'category') return (a.category ?? 'Uncategorized').localeCompare(b.category ?? 'Uncategorized');
+    return a.description.localeCompare(b.description);
+  }), [initialItems, sortBy]);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,25 +39,27 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
       setDescription('');
       setExternalId('');
       setUnit('CS');
+      setToast('Item added');
     } else {
-      alert(res.error);
+      setToast(res.error || 'Unable to add item');
     }
     setIsAdding(false);
   };
 
   const handleToggle = async (id: number, currentStatus: boolean) => {
     const res = await toggleItemStatus(id, currentStatus);
-    if (!res.success) alert(res.error);
+    if (!res.success) setToast(res.error || 'Unable to update item');
   };
 
   const handleUsageUpdate = async (id: number, value: string) => {
     const dailyUsage = Number(value);
     const res = await updateDailyUsage(id, dailyUsage);
     if (!res.success) {
-      alert(res.error);
+      setToast(res.error || 'Unable to update daily usage');
       return;
     }
     setUsageValues((current) => ({ ...current, [id]: value }));
+    setToast('Daily usage updated');
   };
 
   return (
@@ -106,11 +119,26 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
 
       {/* Items List */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-sm font-black uppercase tracking-widest text-slate-400 ml-1">Current Inventory</h2>
-        {initialItems.map((item) => (
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-black uppercase tracking-widest text-slate-400 ml-1">Current Inventory</h2>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'name' | 'category' | 'missing')}
+            className="rounded-lg bg-white px-2 py-2 text-xs font-bold text-slate-500 outline-none dark:bg-slate-900"
+            aria-label="Sort inventory"
+          >
+            <option value="name">Name</option>
+            <option value="category">Category</option>
+            <option value="missing">Usage not set</option>
+          </select>
+        </div>
+        {sortedItems.map((item) => (
           <div
             key={item.id}
             className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
+              item.dailyUsage === 0
+                ? 'border-amber-200 bg-amber-50/60 dark:border-amber-900 dark:bg-amber-900/10'
+                :
               item.isActive
                 ? 'bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800'
                 : 'bg-slate-100 dark:bg-slate-800/50 border-transparent opacity-60'
@@ -137,6 +165,7 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
                   className="w-20 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500"
                 />
                 <span>per day</span>
+                {item.dailyUsage === 0 && <span className="font-bold text-amber-600 dark:text-amber-400">Not set</span>}
               </label>
             </div>
 
@@ -154,6 +183,7 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
           </div>
         ))}
       </div>
+      {toast && <Toast message={toast} onClose={() => setToast('')} />}
     </div>
   );
 }

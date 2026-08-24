@@ -2,10 +2,11 @@
 
 import { useOrderStore } from '@/store/useOrderStore';
 import { submitOrder } from '@/app/actions';
-import { ArrowLeft, CheckCircle2, Loader2, User } from 'lucide-react';
+import Toast from '@/components/Toast';
+import { CheckCircle2, Loader2, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 
 interface Item {
   externalId: string;
@@ -16,13 +17,14 @@ interface Item {
 export default function SummaryClient({ allItems }: { allItems: Item[] }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [ordererName, setOrdererName] = useState('');
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const [ordererName, setOrdererName] = useState(() => typeof window === 'undefined' ? '' : localStorage.getItem('last-orderer-name') ?? '');
+  const [error, setError] = useState('');
   const { items: selectedItems, reset } = useOrderStore();
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
 
   if (!isHydrated) return null;
 
@@ -35,10 +37,11 @@ export default function SummaryClient({ allItems }: { allItems: Item[] }) {
 
   const handleFinish = async () => {
     if (!ordererName.trim()) {
-      alert('Please enter your name');
+      setError('Please enter your name before saving the order.');
       return;
     }
 
+    localStorage.setItem('last-orderer-name', ordererName.trim());
     setIsSubmitting(true);
     const result = await submitOrder(selectedItems, ordererName);
     
@@ -47,7 +50,7 @@ export default function SummaryClient({ allItems }: { allItems: Item[] }) {
       router.push('/');
       router.refresh();
     } else {
-      alert(result.error || 'Something went wrong');
+      setError(result.error || 'Something went wrong');
       setIsSubmitting(false);
     }
   };
@@ -120,6 +123,7 @@ export default function SummaryClient({ allItems }: { allItems: Item[] }) {
             )}
           </button>
         </div>
+        {error && <Toast message={error} onClose={() => setError('')} />}
       </div>
     </div>
   );

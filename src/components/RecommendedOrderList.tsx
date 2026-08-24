@@ -1,7 +1,7 @@
 'use client';
 
 import { useRecommendedOrderStore } from '@/store/useRecommendedOrderStore';
-import { ChevronRight, Minus, Plus, Search, X } from 'lucide-react';
+import { Check, ChevronRight, Filter, Minus, Plus, Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 
@@ -15,6 +15,7 @@ interface Item {
 
 export default function RecommendedOrderList({ items }: { items: Item[] }) {
 	const [search, setSearch] = useState('');
+	const [filter, setFilter] = useState<'all' | 'selected' | 'needs'>('all');
 	const isHydrated = useSyncExternalStore(
 		() => () => {},
 		() => true,
@@ -42,7 +43,18 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 			item.description.toLowerCase().includes(search.toLowerCase()) ||
 			item.externalId.includes(search),
 	);
+	const visibleItems = filteredItems.filter((item) => {
+		if (filter === 'selected') return item.selected;
+		if (filter === 'needs') return item.selected && item.quantity > 0;
+		return true;
+	});
 	const itemsToOrder = recommendations.filter((item) => item.selected).length;
+	const itemsNeedingOrder = recommendations.filter((item) => item.selected && item.quantity > 0).length;
+	const selectItemsNeedingOrder = () => {
+		recommendations
+			.filter((item) => item.quantity > 0)
+			.forEach((item) => setSelected(item.externalId, true));
+	};
 
 	const changeOnHand = (id: string, amount: number) => {
 		setOnHand(id, Math.max(0, (onHand[id] ?? 0) + amount));
@@ -91,10 +103,39 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 						</button>
 					)}
 				</div>
+				<div className='flex items-center gap-2 overflow-x-auto pt-2'>
+					<Filter size={15} className='shrink-0 text-slate-400' />
+					{[
+						{ value: 'all' as const, label: 'All' },
+						{ value: 'selected' as const, label: 'Selected' },
+						{ value: 'needs' as const, label: 'Needs ordering' },
+					].map((option) => (
+						<button
+							key={option.value}
+							type='button'
+							onClick={() => setFilter(option.value)}
+							className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold ${
+								filter === option.value
+									? 'bg-emerald-600 text-white'
+									: 'bg-white text-slate-500 dark:bg-slate-900'
+							}`}
+						>
+							{option.label}
+						</button>
+					))}
+					<button
+						type='button'
+						onClick={selectItemsNeedingOrder}
+						disabled={itemsNeedingOrder === 0}
+						className='ml-auto flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-700 disabled:opacity-40 dark:bg-emerald-900/30 dark:text-emerald-300'
+					>
+						<Check size={13} /> Select needed
+					</button>
+				</div>
 			</div>
 
 			<div className='flex flex-col gap-2'>
-				{filteredItems.map((item) => (
+				{visibleItems.length > 0 ? visibleItems.map((item) => (
 					<div
 						key={item.id}
 						className={`p-4 rounded-2xl border transition-all ${
@@ -160,14 +201,18 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 							</div>
 						</div>
 					</div>
-				))}
+				)) : (
+					<div className='rounded-2xl border border-dashed border-slate-300 py-10 text-center text-sm text-slate-500 dark:border-slate-700'>
+						No items match this filter.
+					</div>
+				)}
 			</div>
 
 			<div className='fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800'>
 				<div className='max-w-md mx-auto flex items-center justify-between gap-4'>
 					<div>
 						<span className='text-xs text-slate-500 uppercase font-bold tracking-tighter'>Recommended</span>
-						<p className='text-xl font-bold dark:text-white'>{itemsToOrder} items</p>
+						<p className='text-xl font-bold dark:text-white'>{itemsToOrder} selected</p>
 					</div>
 					<Link
 						href='/recommended-order/summary'
