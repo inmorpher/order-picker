@@ -20,16 +20,21 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 		() => true,
 		() => false,
 	);
-	const { deliveryDays, onHand, setDeliveryDays, setOnHand } = useRecommendedOrderStore();
+	const { deliveryDays, onHand, selectedItems, setDeliveryDays, setOnHand, setSelected } = useRecommendedOrderStore();
 
 	const recommendations = useMemo(
 		() =>
 			items.map((item) => {
 				const stock = onHand[item.externalId] ?? 0;
 				const quantity = Math.ceil(Math.max(0, item.dailyUsage * deliveryDays - stock));
-				return { ...item, stock, quantity };
+				return {
+					...item,
+					stock,
+					quantity,
+					selected: selectedItems[item.externalId] ?? stock > 0,
+				};
 			}),
-		[deliveryDays, items, onHand],
+		[deliveryDays, items, onHand, selectedItems],
 	);
 
 	const filteredItems = recommendations.filter(
@@ -37,7 +42,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 			item.description.toLowerCase().includes(search.toLowerCase()) ||
 			item.externalId.includes(search),
 	);
-	const itemsToOrder = recommendations.filter((item) => item.quantity > 0).length;
+	const itemsToOrder = recommendations.filter((item) => item.selected).length;
 
 	const changeOnHand = (id: string, amount: number) => {
 		setOnHand(id, Math.max(0, (onHand[id] ?? 0) + amount));
@@ -92,23 +97,30 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 				{filteredItems.map((item) => (
 					<div
 						key={item.id}
-						className={`p-4 rounded-2xl border ${
-							item.quantity > 0
+						className={`p-4 rounded-2xl border transition-all ${
+							item.selected
 								? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800'
 								: 'bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800'
 						}`}
 					>
 						<div className='flex items-center justify-between gap-3'>
-							<div className='min-w-0'>
+							<button
+								type='button'
+								onClick={() => setSelected(item.externalId, !item.selected)}
+								className='min-w-0 text-left'
+								aria-pressed={item.selected}
+							>
 								<p className='font-bold text-slate-900 dark:text-white truncate'>{item.description}</p>
 								<p className='text-xs text-slate-500'>
 									{item.dailyUsage} per day · {item.unit}
 								</p>
-							</div>
+							</button>
 							<div className='text-right shrink-0'>
-								<p className='text-[10px] font-bold uppercase tracking-widest text-slate-400'>To order</p>
-								<p className={`font-black text-lg ${item.quantity > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
-									{item.quantity} {item.unit}
+								<p className='text-[10px] font-bold uppercase tracking-widest text-slate-400'>
+									{item.selected ? 'Selected' : 'Tap to select'}
+								</p>
+								<p className={`font-black text-lg ${item.selected && item.quantity > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+									{item.selected ? `${item.quantity} ${item.unit}` : '—'}
 								</p>
 							</div>
 						</div>

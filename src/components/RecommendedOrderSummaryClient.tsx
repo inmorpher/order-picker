@@ -23,7 +23,7 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 	);
 	const [ordererName, setOrdererName] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const { deliveryDays, onHand, quantityOverrides, setQuantityOverride, reset } = useRecommendedOrderStore();
+	const { deliveryDays, onHand, selectedItems, quantityOverrides, setSelected, setQuantityOverride, reset } = useRecommendedOrderStore();
 
 	const orderItems = useMemo(
 		() =>
@@ -32,11 +32,12 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 					const calculatedQuantity = Math.ceil(Math.max(0, item.dailyUsage * deliveryDays - (onHand[item.externalId] ?? 0)));
 					return {
 						...item,
+						selected: selectedItems[item.externalId] ?? (onHand[item.externalId] ?? 0) > 0,
 						quantity: quantityOverrides[item.externalId] ?? calculatedQuantity,
 					};
 				})
-				.filter((item) => item.quantity > 0),
-		[deliveryDays, items, onHand, quantityOverrides],
+				.filter((item) => item.selected),
+		[deliveryDays, items, onHand, quantityOverrides, selectedItems],
 	);
 
 	const changeQuantity = (id: string, current: number, amount: number) => {
@@ -48,14 +49,15 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 			alert('Please enter your name');
 			return;
 		}
-		if (orderItems.length === 0) {
+		const itemsToSubmit = orderItems.filter((item) => item.quantity > 0);
+		if (itemsToSubmit.length === 0) {
 			alert('No items selected');
 			return;
 		}
 
 		setIsSubmitting(true);
 		const result = await submitOrder(
-			Object.fromEntries(orderItems.map((item) => [item.externalId, item.quantity])),
+			Object.fromEntries(itemsToSubmit.map((item) => [item.externalId, item.quantity])),
 			ordererName,
 			'recommended',
 		);
@@ -106,6 +108,13 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 									<Plus size={17} />
 								</button>
 							</div>
+							<button
+								type='button'
+								onClick={() => setSelected(item.externalId, false)}
+								className='text-xs font-bold text-red-600 dark:text-red-400'
+							>
+								Remove
+							</button>
 						</div>
 					</div>
 				))}
@@ -119,7 +128,7 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 				</div>
 			</div>
 
-			<button type='button' onClick={handleSubmit} disabled={isSubmitting || orderItems.length === 0 || !ordererName.trim()} className='fixed bottom-0 left-0 right-0 mx-auto max-w-md m-4 flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black shadow-xl disabled:opacity-50'>
+			<button type='button' onClick={handleSubmit} disabled={isSubmitting || !orderItems.some((item) => item.quantity > 0) || !ordererName.trim()} className='fixed bottom-0 left-0 right-0 mx-auto max-w-md m-4 flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black shadow-xl disabled:opacity-50'>
 				{isSubmitting ? <Loader2 className='animate-spin' size={22} /> : <CheckCircle2 size={22} />}
 				SAVE RECOMMENDED ORDER
 			</button>
