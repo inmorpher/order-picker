@@ -1,6 +1,7 @@
 'use client';
 
 import { submitOrder } from '@/app/actions';
+import Toast from '@/components/Toast';
 import { useRecommendedOrderStore } from '@/store/useRecommendedOrderStore';
 import { ArrowLeft, CheckCircle2, Loader2, Minus, Plus, User } from 'lucide-react';
 import Link from 'next/link';
@@ -21,8 +22,10 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 		() => true,
 		() => false,
 	);
-	const [ordererName, setOrdererName] = useState('');
+	const [ordererName, setOrdererName] = useState(() => typeof window === 'undefined' ? '' : localStorage.getItem('last-orderer-name') ?? '');
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState('');
+	const [removedItem, setRemovedItem] = useState<string | null>(null);
 	const { deliveryDays, onHand, selectedItems, quantityOverrides, setDeliveryDays, setSelected, setQuantityOverride, reset } = useRecommendedOrderStore();
 
 	const orderItems = useMemo(
@@ -39,6 +42,8 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 				.filter((item) => item.selected),
 		[deliveryDays, items, onHand, quantityOverrides, selectedItems],
 	);
+	const itemsToSubmit = orderItems.filter((item) => item.quantity > 0);
+	const totalQuantity = itemsToSubmit.reduce((total, item) => total + item.quantity, 0);
 
 	const changeQuantity = (id: string, current: number, amount: number) => {
 		setQuantityOverride(id, Math.max(0, current + amount));
@@ -46,12 +51,12 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 
 	const handleSubmit = async () => {
 		if (!ordererName.trim()) {
-			alert('Please enter your name');
+			setError('Please enter your name before saving the order.');
 			return;
 		}
-		const itemsToSubmit = orderItems.filter((item) => item.quantity > 0);
+		localStorage.setItem('last-orderer-name', ordererName.trim());
 		if (itemsToSubmit.length === 0) {
-			alert('No items selected');
+			setError('Add at least one item with a quantity greater than 0.');
 			return;
 		}
 
@@ -66,7 +71,7 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 			router.push('/');
 			router.refresh();
 		} else {
-			alert(result.error || 'Something went wrong');
+			setError(result.error || 'Something went wrong');
 			setIsSubmitting(false);
 		}
 	};
@@ -78,9 +83,19 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 			<Link href='/recommended-order' className='flex items-center gap-2 text-sm font-bold text-slate-600 dark:text-slate-400'>
 				<ArrowLeft size={18} /> Back to selection
 			</Link>
-			<div className='bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-3xl p-5'>
-				<p className='text-xs font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300'>Review</p>
-				<p className='text-sm text-emerald-800 dark:text-emerald-200 mt-1'>Calculated for {deliveryDays} day{deliveryDays === 1 ? '' : 's'} of usage. You can adjust any quantity before saving.</p>
+			<div className='bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-2xl p-5'>
+				<p className='text-xs font-black uppercase tracking-widest text-teal-700 dark:text-teal-300'>Review</p>
+				<p className='text-sm text-teal-800 dark:text-teal-200 mt-1'>Calculated for {deliveryDays} day{deliveryDays === 1 ? '' : 's'} of usage. You can adjust any quantity before saving.</p>
+				<div className='grid grid-cols-2 gap-2 mt-4'>
+					<div className='rounded-xl bg-white/70 p-3 dark:bg-slate-900/40'>
+						<p className='text-[10px] font-black uppercase tracking-widest text-slate-400'>Items</p>
+						<p className='text-lg font-black text-teal-700 dark:text-teal-300'>{orderItems.length}</p>
+					</div>
+					<div className='rounded-xl bg-white/70 p-3 dark:bg-slate-900/40'>
+						<p className='text-[10px] font-black uppercase tracking-widest text-slate-400'>Total units</p>
+						<p className='text-lg font-black text-teal-700 dark:text-teal-300'>{totalQuantity}</p>
+					</div>
+				</div>
 				<div className='grid grid-cols-2 gap-2 mt-4'>
 					{[
 						{ days: 1 as const, label: 'Tomorrow' },
@@ -92,8 +107,8 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 							onClick={() => setDeliveryDays(option.days)}
 							className={`p-2 rounded-xl border text-sm font-bold transition-all ${
 								deliveryDays === option.days
-									? 'bg-emerald-600 border-emerald-600 text-white'
-									: 'bg-white/70 dark:bg-slate-900/50 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+									? 'bg-teal-600 border-teal-600 text-white'
+									: 'bg-white/70 dark:bg-slate-900/50 border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-200'
 							}`}
 						>
 							{option.label}
@@ -131,7 +146,10 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 							</div>
 							<button
 								type='button'
-								onClick={() => setSelected(item.externalId, false)}
+								onClick={() => {
+									setSelected(item.externalId, false);
+									setRemovedItem(item.externalId);
+								}}
 								className='text-xs font-bold text-red-600 dark:text-red-400'
 							>
 								Remove
@@ -141,18 +159,35 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 				))}
 			</div>
 
-			<div className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm'>
+			<div className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm'>
 				<label className='block text-xs font-black text-slate-400 uppercase tracking-widest mb-2'>Your name</label>
 				<div className='relative'>
 					<User className='absolute left-3 top-1/2 -translate-y-1/2 text-slate-400' size={18} />
-					<input type='text' placeholder='Enter your name...' value={ordererName} onChange={(event) => setOrdererName(event.target.value)} className='w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500' />
+					<input type='text' placeholder='Enter your name...' value={ordererName} onChange={(event) => setOrdererName(event.target.value)} className='w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-teal-500' />
 				</div>
 			</div>
 
-			<button type='button' onClick={handleSubmit} disabled={isSubmitting || !orderItems.some((item) => item.quantity > 0) || !ordererName.trim()} className='w-full flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black shadow-xl disabled:opacity-50'>
+			{error && (
+				<div className='rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 dark:border-red-900 dark:bg-red-900/20 dark:text-red-300'>
+					{error}
+				</div>
+			)}
+
+			<button type='button' onClick={handleSubmit} disabled={isSubmitting || !itemsToSubmit.length || !ordererName.trim()} className='w-full flex items-center justify-center gap-3 bg-teal-600 hover:bg-teal-700 text-white py-4 rounded-2xl font-black shadow-xl disabled:opacity-50'>
 				{isSubmitting ? <Loader2 className='animate-spin' size={22} /> : <CheckCircle2 size={22} />}
 				SAVE RECOMMENDED ORDER
 			</button>
+			{removedItem && (
+				<Toast
+					message='Item removed from review'
+					actionLabel='Undo'
+					onAction={() => {
+						setSelected(removedItem, true);
+						setRemovedItem(null);
+					}}
+					onClose={() => setRemovedItem(null)}
+				/>
+			)}
 		</div>
 	);
 }

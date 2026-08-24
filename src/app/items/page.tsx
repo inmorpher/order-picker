@@ -4,6 +4,7 @@ import ItemsManagerClient from '@/components/ItemsManagerClient';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { desc } from 'drizzle-orm';
+import MobileNav from '@/components/MobileNav';
 
 export default async function ItemsPage() {
   const allItems = await db.select().from(items).orderBy(desc(items.id));
@@ -17,9 +18,10 @@ export default async function ItemsPage() {
         <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Manage Items</h1>
       </header>
 
-      <div className="p-4">
+      <div className="p-4 pb-24">
         <ItemsManagerClient initialItems={allItems} />
       </div>
+      <MobileNav />
     </main>
   );
 }
