@@ -23,7 +23,7 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 	);
 	const [ordererName, setOrdererName] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const { deliveryDays, onHand, selectedItems, quantityOverrides, setSelected, setQuantityOverride, reset } = useRecommendedOrderStore();
+	const { deliveryDays, onHand, selectedItems, quantityOverrides, setDeliveryDays, setSelected, setQuantityOverride, reset } = useRecommendedOrderStore();
 
 	const orderItems = useMemo(
 		() =>
@@ -81,6 +81,25 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 			<div className='bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-3xl p-5'>
 				<p className='text-xs font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-300'>Review</p>
 				<p className='text-sm text-emerald-800 dark:text-emerald-200 mt-1'>Calculated for {deliveryDays} day{deliveryDays === 1 ? '' : 's'} of usage. You can adjust any quantity before saving.</p>
+				<div className='grid grid-cols-2 gap-2 mt-4'>
+					{[
+						{ days: 1 as const, label: 'Tomorrow' },
+						{ days: 2 as const, label: 'Day after tomorrow' },
+					].map((option) => (
+						<button
+							key={option.days}
+							type='button'
+							onClick={() => setDeliveryDays(option.days)}
+							className={`p-2 rounded-xl border text-sm font-bold transition-all ${
+								deliveryDays === option.days
+									? 'bg-emerald-600 border-emerald-600 text-white'
+									: 'bg-white/70 dark:bg-slate-900/50 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+							}`}
+						>
+							{option.label}
+						</button>
+					))}
+				</div>
 			</div>
 
 			<div className='flex flex-col gap-2'>

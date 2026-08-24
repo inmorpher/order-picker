@@ -20,7 +20,7 @@ export const useRecommendedOrderStore = create<RecommendedOrderState>()(
 			onHand: {},
 			selectedItems: {},
 			quantityOverrides: {},
-			setDeliveryDays: (deliveryDays) => set({ deliveryDays }),
+			setDeliveryDays: (deliveryDays) => set({ deliveryDays, quantityOverrides: {} }),
 			setOnHand: (id, quantity) =>
 				set((state) => ({
 					onHand: { ...state.onHand, [id]: Math.max(0, quantity) },
