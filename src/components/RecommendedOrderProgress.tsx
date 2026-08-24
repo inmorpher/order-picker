@@ -8,7 +8,7 @@ export default function RecommendedOrderProgress({ currentStep }: RecommendedOrd
 	return (
 		<nav
 			aria-label='Recommended order progress'
-			className='px-4 py-4 border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70'
+			className='sticky top-[65px] z-20 px-4 py-4 border-b border-slate-200 bg-white/95 dark:border-slate-800 dark:bg-slate-900/95'
 		>
 			<div className='max-w-md mx-auto grid grid-cols-3 gap-2'>
 				{steps.map((label, index) => {

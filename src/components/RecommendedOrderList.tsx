@@ -1,7 +1,7 @@
 'use client';
 
 import { useRecommendedOrderStore } from '@/store/useRecommendedOrderStore';
-import { Check, ChevronRight, Filter, Minus, Plus, Search, X } from 'lucide-react';
+import { ArrowDownUp, Check, ChevronRight, Filter, Minus, Plus, Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 
@@ -16,6 +16,7 @@ interface Item {
 export default function RecommendedOrderList({ items }: { items: Item[] }) {
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState<'all' | 'selected' | 'needs'>('all');
+	const [needsFirst, setNeedsFirst] = useState(true);
 	const isHydrated = useSyncExternalStore(
 		() => () => {},
 		() => true,
@@ -47,6 +48,9 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 		if (filter === 'selected') return item.selected;
 		if (filter === 'needs') return item.selected && item.quantity > 0;
 		return true;
+	}).sort((a, b) => {
+		if (needsFirst && a.quantity !== b.quantity) return Number(b.quantity > 0) - Number(a.quantity > 0);
+		return a.description.localeCompare(b.description);
 	});
 	const itemsToOrder = recommendations.filter((item) => item.selected).length;
 	const itemsNeedingOrder = recommendations.filter((item) => item.quantity > 0).length;
@@ -132,6 +136,13 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 						<Check size={13} /> Select needed
 					</button>
 				</div>
+				<button
+					type='button'
+					onClick={() => setNeedsFirst((current) => !current)}
+					className='mt-2 flex items-center gap-1 text-xs font-bold text-slate-500'
+				>
+					<ArrowDownUp size={13} /> {needsFirst ? 'Needs ordering first' : 'Sorted by name'}
+				</button>
 			</div>
 
 			<div className='flex flex-col gap-2'>
@@ -166,7 +177,13 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 								aria-pressed={item.selected}
 							>
 								<p className='text-[10px] font-bold uppercase tracking-widest text-slate-400'>
-									{item.selected ? 'Selected' : 'Tap to select'}
+									{item.dailyUsage === 0
+										? 'Usage not set'
+										: item.quantity > 0
+											? 'Needs ordering'
+											: item.selected
+												? 'Enough stock'
+												: 'Tap to select'}
 								</p>
 								<p className={`font-black text-lg ${item.selected && item.quantity > 0 ? 'text-teal-600' : 'text-slate-400'}`}>
 									{item.selected ? `${item.quantity} ${item.unit}` : '—'}

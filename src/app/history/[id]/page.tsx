@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, User, Package, Download } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { notFound } from 'next/navigation';
+import MobileNav from '@/components/MobileNav';
 
 export default async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -40,7 +41,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
         </div>
       </header>
 
-      <div className="p-4 flex flex-col gap-6">
+      <div className="p-4 pb-24 flex flex-col gap-6">
         {/* Order Info Card */}
         <div className="bg-indigo-600 rounded-2xl p-6 text-white shadow-xl shadow-indigo-200 dark:shadow-none">
           <div className="flex flex-col gap-4">
@@ -96,6 +97,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
           EXPORT AS PDF (SOON)
         </button>
       </div>
+      <MobileNav />
     </main>
   );
 }

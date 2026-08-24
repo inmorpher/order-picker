@@ -1,9 +1,10 @@
 import { History, Plus, Settings, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import MobileNav from '@/components/MobileNav';
 
 export default function Home() {
 	return (
-		<main className='min-h-screen bg-slate-50 dark:bg-slate-950 p-6 flex flex-col gap-6 max-w-md mx-auto'>
+		<main className='min-h-screen bg-slate-50 dark:bg-slate-950 p-6 pb-24 flex flex-col gap-6 max-w-md mx-auto'>
 			<header className='py-8'>
 				<h1 className='text-4xl font-black text-slate-900 dark:text-white tracking-tight'>
 					Order Picker
@@ -68,6 +69,7 @@ export default function Home() {
 					</div>
 				</Link>
 			</section>
+			<MobileNav />
 		</main>
 	);
 }
