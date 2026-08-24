@@ -5,7 +5,11 @@ import { orders, orderItems, items } from '@/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-export async function submitOrder(selectedItems: Record<string, number>, ordererName: string) {
+export async function submitOrder(
+  selectedItems: Record<string, number>,
+  ordererName: string,
+  orderType: 'standard' | 'recommended' = 'standard'
+) {
   const itemIds = Object.keys(selectedItems).filter(id => selectedItems[id] > 0);
   
   if (itemIds.length === 0) return { error: 'No items selected' };
@@ -23,6 +27,7 @@ export async function submitOrder(selectedItems: Record<string, number>, orderer
       ordererName: ordererName.trim(),
       status: 'completed',
       totalItemsCount: itemIds.length,
+      orderType,
     }).returning({ id: orders.id });
 
     const itemsToInsert = itemRecords.map(item => ({
@@ -49,6 +54,7 @@ export async function addItem(description: string, externalId: string, unit: str
       description,
       externalId,
       unit,
+      dailyUsage: 0,
       isActive: true,
     });
     revalidatePath('/items');
@@ -57,6 +63,22 @@ export async function addItem(description: string, externalId: string, unit: str
   } catch (e) {
     console.error('Failed to add item:', e);
     return { error: 'Item already exists or database error' };
+  }
+}
+
+export async function updateDailyUsage(id: number, dailyUsage: number) {
+  if (!Number.isFinite(dailyUsage) || dailyUsage < 0) {
+    return { error: 'Daily usage must be a non-negative number' };
+  }
+
+  try {
+    await db.update(items).set({ dailyUsage }).where(eq(items.id, id));
+    revalidatePath('/items');
+    revalidatePath('/recommended-order');
+    return { success: true };
+  } catch (e) {
+    console.error('Failed to update daily usage:', e);
+    return { error: 'Database error' };
   }
 }
 

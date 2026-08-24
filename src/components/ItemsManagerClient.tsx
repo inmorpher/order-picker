@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { addItem, toggleItemStatus } from '@/app/actions';
+import { addItem, toggleItemStatus, updateDailyUsage } from '@/app/actions';
 import { Plus, Trash2, Eye, EyeOff, Package, Hash, Weight } from 'lucide-react';
 
 interface Item {
@@ -9,6 +9,7 @@ interface Item {
   externalId: string;
   description: string;
   unit: string;
+  dailyUsage: number;
   isActive: boolean;
 }
 
@@ -17,6 +18,7 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
   const [externalId, setExternalId] = useState('');
   const [unit, setUnit] = useState('CS');
   const [isAdding, setIsAdding] = useState(false);
+  const [usageValues, setUsageValues] = useState<Record<number, string>>({});
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +37,16 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
   const handleToggle = async (id: number, currentStatus: boolean) => {
     const res = await toggleItemStatus(id, currentStatus);
     if (!res.success) alert(res.error);
+  };
+
+  const handleUsageUpdate = async (id: number, value: string) => {
+    const dailyUsage = Number(value);
+    const res = await updateDailyUsage(id, dailyUsage);
+    if (!res.success) {
+      alert(res.error);
+      return;
+    }
+    setUsageValues((current) => ({ ...current, [id]: value }));
   };
 
   return (
@@ -113,6 +125,19 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
                 <span>•</span>
                 <span>{item.unit}</span>
               </div>
+              <label className="flex items-center gap-2 mt-3 text-xs font-semibold text-slate-500">
+                Daily usage
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={usageValues[item.id] ?? item.dailyUsage}
+                  onChange={(e) => setUsageValues((current) => ({ ...current, [item.id]: e.target.value }))}
+                  onBlur={(e) => handleUsageUpdate(item.id, e.target.value)}
+                  className="w-20 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <span>per day</span>
+              </label>
             </div>
 
             <button

@@ -1,4 +1,4 @@
-import { History, Plus, Settings } from 'lucide-react';
+import { History, Plus, Settings, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -35,6 +35,19 @@ export default function Home() {
 					<div>
 						<h2 className='text-2xl font-bold'>History</h2>
 						<p className='text-slate-500 text-sm font-medium'>Past order logs</p>
+					</div>
+				</Link>
+
+				<Link
+					href='/recommended-order'
+					className='group flex items-center gap-5 bg-emerald-600 p-6 rounded-3xl text-white shadow-xl shadow-emerald-200 dark:shadow-none active:scale-95 transition-all duration-200'
+				>
+					<div className='p-4 bg-white/20 rounded-2xl group-hover:bg-white/30 transition-colors'>
+						<Sparkles size={32} strokeWidth={3} />
+					</div>
+					<div>
+						<h2 className='text-2xl font-bold'>Recommended Order</h2>
+						<p className='text-emerald-100/80 text-sm font-medium'>Calculate what you need</p>
 					</div>
 				</Link>
 
