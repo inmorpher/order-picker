@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import RecommendedOrderList from '@/components/RecommendedOrderList';
+import RecommendedOrderProgress from '@/components/RecommendedOrderProgress';
 
 export default async function RecommendedOrderPage() {
 	const activeItems = await db
@@ -25,6 +26,7 @@ export default async function RecommendedOrderPage() {
 				</Link>
 				<h1 className='text-xl font-bold text-slate-900 dark:text-white'>Recommended Order</h1>
 			</header>
+			<RecommendedOrderProgress currentStep={2} />
 			<div className='p-4'>
 				<RecommendedOrderList items={activeItems} />
 			</div>

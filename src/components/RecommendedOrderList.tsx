@@ -111,9 +111,12 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 								aria-pressed={item.selected}
 							>
 								<p className='font-bold text-slate-900 dark:text-white truncate'>{item.description}</p>
-								<p className='text-xs text-slate-500'>
-									{item.dailyUsage} per day · {item.unit}
-								</p>
+								<div className='flex items-center gap-2 mt-1'>
+									<span className='text-[10px] bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-slate-500 font-mono'>
+										#{item.externalId}
+									</span>
+									<span className='text-xs text-slate-500'>{item.dailyUsage} per day · {item.unit}</span>
+								</div>
 							</button>
 							<button
 								type='button'
@@ -130,7 +133,14 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 							</button>
 						</div>
 						<div className='flex items-center justify-between mt-3'>
-							<span className='text-xs font-semibold text-slate-500'>On hand</span>
+							<div className='flex items-center gap-2'>
+								<span className='text-xs font-semibold text-slate-500'>On hand</span>
+								{item.stock === 0 && (
+									<span className='text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400'>
+										Out of stock
+									</span>
+								)}
+							</div>
 							<div className='flex items-center gap-1'>
 								<button type='button' onClick={() => changeOnHand(item.externalId, -1)} className='w-9 h-9 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
 									<Minus size={17} />
