@@ -15,27 +15,27 @@ export default function Home() {
 				<p className='ml-1 text-xs font-black uppercase tracking-widest text-slate-400'>Ordering</p>
 				<Link
 					href='/order'
-					className='group flex items-center gap-5 bg-indigo-600 p-6 rounded-3xl text-white shadow-xl shadow-indigo-200 dark:shadow-none active:scale-95 transition-all duration-200'
+					className='group flex items-center gap-5 bg-white p-5 rounded-2xl text-slate-900 border border-indigo-200 shadow-sm active:scale-[0.98] transition-all duration-200 dark:bg-slate-900 dark:text-white dark:border-indigo-900'
 				>
-					<div className='p-4 bg-white/20 rounded-2xl group-hover:bg-white/30 transition-colors'>
-						<Plus size={32} strokeWidth={3} />
+					<div className='p-4 bg-indigo-100 text-indigo-600 rounded-xl group-hover:bg-indigo-200 transition-colors dark:bg-indigo-900/40 dark:text-indigo-300'>
+						<Plus size={28} strokeWidth={3} />
 					</div>
 					<div>
 						<h2 className='text-2xl font-bold'>New Order</h2>
-						<p className='text-indigo-100/80 text-sm font-medium'>Start picking items</p>
+						<p className='text-slate-500 text-sm font-medium'>Pick items manually</p>
 					</div>
 				</Link>
 
 				<Link
 					href='/recommended-order'
-					className='group flex items-center gap-5 bg-emerald-600 p-6 rounded-3xl text-white shadow-xl shadow-emerald-200 dark:shadow-none active:scale-95 transition-all duration-200'
+					className='group flex items-center gap-5 bg-white p-5 rounded-2xl text-slate-900 border border-teal-200 shadow-sm active:scale-[0.98] transition-all duration-200 dark:bg-slate-900 dark:text-white dark:border-teal-900'
 				>
-					<div className='p-4 bg-white/20 rounded-2xl group-hover:bg-white/30 transition-colors'>
-						<Sparkles size={32} strokeWidth={3} />
+					<div className='p-4 bg-teal-100 text-teal-600 rounded-xl group-hover:bg-teal-200 transition-colors dark:bg-teal-900/40 dark:text-teal-300'>
+						<Sparkles size={28} strokeWidth={3} />
 					</div>
 					<div>
 						<h2 className='text-2xl font-bold'>Recommended Order</h2>
-						<p className='text-emerald-100/80 text-sm font-medium'>Calculate what you need from stock</p>
+						<p className='text-slate-500 text-sm font-medium'>Calculate from daily usage</p>
 					</div>
 				</Link>
 			</section>
@@ -44,7 +44,7 @@ export default function Home() {
 				<p className='ml-1 text-xs font-black uppercase tracking-widest text-slate-400'>Inventory</p>
 				<Link
 					href='/history'
-					className='flex items-center gap-5 bg-white dark:bg-slate-900 p-6 rounded-3xl text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm active:scale-95 transition-all duration-200'
+					className='flex items-center gap-5 bg-white dark:bg-slate-900 p-5 rounded-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all duration-200'
 				>
 					<div className='p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl'>
 						<History size={32} className='text-slate-600 dark:text-slate-400' />
@@ -57,7 +57,7 @@ export default function Home() {
 
 				<Link
 					href='/items'
-					className='flex items-center gap-5 bg-white dark:bg-slate-900 p-6 rounded-3xl text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm active:scale-95 transition-all duration-200'
+					className='flex items-center gap-5 bg-white dark:bg-slate-900 p-5 rounded-2xl text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all duration-200'
 				>
 					<div className='p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl'>
 						<Settings size={32} className='text-slate-600 dark:text-slate-400' />

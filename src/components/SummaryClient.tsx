@@ -70,7 +70,7 @@ export default function SummaryClient({ allItems }: { allItems: Item[] }) {
   return (
     <div className="flex flex-col gap-6 pb-40">
       {/* Orderer Name Input */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
         <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
           Your Name
         </label>
@@ -86,7 +86,7 @@ export default function SummaryClient({ allItems }: { allItems: Item[] }) {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
         <div className="bg-slate-50 dark:bg-slate-800/50 p-4 border-b border-slate-200 dark:border-slate-800">
           <h2 className="font-bold text-slate-900 dark:text-white uppercase text-xs tracking-widest">Order Summary ({orderItems.length} items)</h2>
         </div>

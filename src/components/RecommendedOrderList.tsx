@@ -49,7 +49,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 		return true;
 	});
 	const itemsToOrder = recommendations.filter((item) => item.selected).length;
-	const itemsNeedingOrder = recommendations.filter((item) => item.selected && item.quantity > 0).length;
+	const itemsNeedingOrder = recommendations.filter((item) => item.quantity > 0).length;
 	const selectItemsNeedingOrder = () => {
 		recommendations
 			.filter((item) => item.quantity > 0)
@@ -64,7 +64,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 
 	return (
 		<div className='flex flex-col gap-4 pb-32'>
-			<section className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm'>
+			<section className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm'>
 				<h2 className='text-sm font-black uppercase tracking-widest text-slate-400 mb-3'>Order coverage</h2>
 				<div className='grid grid-cols-2 gap-3'>
 					{[
@@ -77,7 +77,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 							onClick={() => setDeliveryDays(option.days)}
 							className={`p-3 rounded-2xl border font-bold transition-all ${
 								deliveryDays === option.days
-									? 'bg-emerald-600 border-emerald-600 text-white'
+									? 'bg-teal-600 border-teal-600 text-white'
 									: 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
 							}`}
 						>
@@ -95,7 +95,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 						placeholder='Search items...'
 						value={search}
 						onChange={(event) => setSearch(event.target.value)}
-						className='w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none'
+						className='w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none'
 					/>
 					{search && (
 						<button type='button' onClick={() => setSearch('')} className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400'>
@@ -116,7 +116,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 							onClick={() => setFilter(option.value)}
 							className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold ${
 								filter === option.value
-									? 'bg-emerald-600 text-white'
+									? 'bg-teal-600 text-white'
 									: 'bg-white text-slate-500 dark:bg-slate-900'
 							}`}
 						>
@@ -127,7 +127,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 						type='button'
 						onClick={selectItemsNeedingOrder}
 						disabled={itemsNeedingOrder === 0}
-						className='ml-auto flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-700 disabled:opacity-40 dark:bg-emerald-900/30 dark:text-emerald-300'
+						className='ml-auto flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-teal-100 px-3 py-1.5 text-xs font-bold text-teal-700 disabled:opacity-40 dark:bg-teal-900/30 dark:text-teal-300'
 					>
 						<Check size={13} /> Select needed
 					</button>
@@ -140,7 +140,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 						key={item.id}
 						className={`p-4 rounded-2xl border transition-all ${
 							item.selected
-								? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800'
+								? 'bg-teal-50 border-teal-200 dark:bg-teal-900/20 dark:border-teal-800'
 								: 'bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800'
 						}`}
 					>
@@ -168,7 +168,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 								<p className='text-[10px] font-bold uppercase tracking-widest text-slate-400'>
 									{item.selected ? 'Selected' : 'Tap to select'}
 								</p>
-								<p className={`font-black text-lg ${item.selected && item.quantity > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+								<p className={`font-black text-lg ${item.selected && item.quantity > 0 ? 'text-teal-600' : 'text-slate-400'}`}>
 									{item.selected ? `${item.quantity} ${item.unit}` : '—'}
 								</p>
 							</button>
@@ -192,10 +192,10 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 									step='0.01'
 									value={onHand[item.externalId] ?? ''}
 									onChange={(event) => setOnHand(item.externalId, Math.max(0, Number(event.target.value) || 0))}
-									className='w-20 h-9 px-2 text-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500'
+									className='w-20 h-9 px-2 text-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-teal-500'
 									aria-label={`${item.description} stock on hand`}
 								/>
-								<button type='button' onClick={() => changeOnHand(item.externalId, 1)} className='w-9 h-9 flex items-center justify-center rounded-lg bg-emerald-600 text-white'>
+								<button type='button' onClick={() => changeOnHand(item.externalId, 1)} className='w-9 h-9 flex items-center justify-center rounded-lg bg-teal-600 text-white'>
 									<Plus size={17} />
 								</button>
 							</div>
@@ -217,7 +217,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 					<Link
 						href='/recommended-order/summary'
 						className={`flex items-center gap-2 py-4 px-6 rounded-2xl font-bold ${
-							itemsToOrder > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 pointer-events-none'
+							itemsToOrder > 0 ? 'bg-teal-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 pointer-events-none'
 						}`}
 					>
 						Review <ChevronRight size={20} />

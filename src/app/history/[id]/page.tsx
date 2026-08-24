@@ -42,7 +42,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
 
       <div className="p-4 flex flex-col gap-6">
         {/* Order Info Card */}
-        <div className="bg-indigo-600 rounded-[32px] p-6 text-white shadow-xl shadow-indigo-200 dark:shadow-none">
+        <div className="bg-indigo-600 rounded-2xl p-6 text-white shadow-xl shadow-indigo-200 dark:shadow-none">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-white/20 rounded-2xl">
@@ -69,7 +69,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
         </div>
 
         {/* Items List */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
           <div className="bg-slate-50 dark:bg-slate-800/50 p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <h2 className="font-bold text-slate-900 dark:text-white uppercase text-xs tracking-widest flex items-center gap-2">
               <Package size={14} />

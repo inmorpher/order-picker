@@ -21,7 +21,7 @@ export default function RecommendedOrderProgress({ currentStep }: RecommendedOrd
 							<div
 								className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-black ${
 									isCurrent || isComplete
-										? 'bg-emerald-600 text-white'
+										? 'bg-teal-600 text-white'
 										: 'bg-slate-100 dark:bg-slate-800 text-slate-400'
 								}`}
 							>
@@ -29,7 +29,7 @@ export default function RecommendedOrderProgress({ currentStep }: RecommendedOrd
 							</div>
 							<span
 								className={`text-[10px] font-black uppercase tracking-widest ${
-									isCurrent ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-400'
+									isCurrent ? 'text-teal-700 dark:text-teal-300' : 'text-slate-400'
 								}`}
 							>
 								{label}

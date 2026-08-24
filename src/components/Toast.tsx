@@ -13,7 +13,7 @@ export default function Toast({ message, actionLabel, onAction, onClose }: Toast
 			<span>{message}</span>
 			<div className='flex shrink-0 items-center gap-3'>
 				{actionLabel && onAction && (
-					<button type='button' onClick={onAction} className='font-black text-emerald-300'>
+					<button type='button' onClick={onAction} className='font-black text-teal-300'>
 						{actionLabel}
 					</button>
 				)}

@@ -23,7 +23,7 @@ export default async function HistoryPage() {
 						<Link
 							key={order.id}
 							href={`/history/${order.id}`}
-							className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm active:scale-95 transition-all flex items-center justify-between group'
+							className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm active:scale-[0.98] transition-all flex items-center justify-between group'
 						>
 							<div className='flex flex-col gap-2'>
 								<div className='flex items-center gap-2 text-slate-400'>

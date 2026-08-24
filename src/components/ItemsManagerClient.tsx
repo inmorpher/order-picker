@@ -65,7 +65,7 @@ export default function ItemsManagerClient({ initialItems }: { initialItems: Ite
   return (
     <div className="flex flex-col gap-8 pb-20">
       {/* Add Item Form */}
-      <form onSubmit={handleAdd} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[32px] p-6 shadow-sm flex flex-col gap-4">
+      <form onSubmit={handleAdd} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
         <h2 className="text-sm font-black uppercase tracking-widest text-slate-400 ml-1">Add New Item</h2>
         
         <div className="flex flex-col gap-3">
