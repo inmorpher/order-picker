@@ -19,6 +19,8 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 	const router = useRouter();
 	const [ordererName, setOrdererName] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState('');
+	const [removedItem, setRemovedItem] = useState<string | null>(null);
 	const { deliveryDays, onHand, selectedItems, quantityOverrides, hasHydrated, setDeliveryDays, setSelected, setQuantityOverride, reset } = useRecommendedOrderStore();
 
 	const orderItems = useMemo(
