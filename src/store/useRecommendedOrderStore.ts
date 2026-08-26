@@ -6,6 +6,7 @@ interface RecommendedOrderState {
 	onHand: Record<string, number>;
 	selectedItems: Record<string, boolean>;
 	quantityOverrides: Record<string, number>;
+	hasHydrated: boolean;
 	setDeliveryDays: (days: 1 | 2) => void;
 	setOnHand: (id: string, quantity: number) => void;
 	setSelected: (id: string, selected: boolean) => void;
@@ -20,6 +21,7 @@ export const useRecommendedOrderStore = create<RecommendedOrderState>()(
 			onHand: {},
 			selectedItems: {},
 			quantityOverrides: {},
+			hasHydrated: false,
 			setDeliveryDays: (deliveryDays) => set({ deliveryDays, quantityOverrides: {} }),
 			setOnHand: (id, quantity) =>
 				set((state) => ({
@@ -42,6 +44,11 @@ export const useRecommendedOrderStore = create<RecommendedOrderState>()(
 				})),
 			reset: () => set({ deliveryDays: 1, onHand: {}, selectedItems: {}, quantityOverrides: {} }),
 		}),
-		{ name: 'recommended-order-storage' },
+		{
+			name: 'recommended-order-storage',
+			onRehydrateStorage: () => () => {
+				useRecommendedOrderStore.setState({ hasHydrated: true });
+			},
+		},
 	),
 );
