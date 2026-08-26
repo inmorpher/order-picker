@@ -11,6 +11,7 @@ interface RecommendedOrderState {
 	setOnHand: (id: string, quantity: number) => void;
 	setSelected: (id: string, selected: boolean) => void;
 	setQuantityOverride: (id: string, quantity: number) => void;
+	setHasHydrated: (value: boolean) => void;
 	reset: () => void;
 }
 
@@ -42,12 +43,13 @@ export const useRecommendedOrderStore = create<RecommendedOrderState>()(
 						[id]: Math.max(0, quantity),
 					},
 				})),
+			setHasHydrated: (hasHydrated) => set({ hasHydrated }),
 			reset: () => set({ deliveryDays: 1, onHand: {}, selectedItems: {}, quantityOverrides: {} }),
 		}),
 		{
 			name: 'recommended-order-storage',
-			onRehydrateStorage: () => () => {
-				useRecommendedOrderStore.setState({ hasHydrated: true });
+			onRehydrateStorage: () => (state) => {
+				state?.setHasHydrated(true);
 			},
 		},
 	),
