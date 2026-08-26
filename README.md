@@ -15,7 +15,7 @@ A sleek web application for efficiently composing and managing product orders. O
 
 | Component            | Technology                       |
 | -------------------- | -------------------------------- |
-| **Frontend**         | Next.js 15, React 19, TypeScript |
+| **Frontend**         | Next.js 16, React 19, TypeScript |
 | **Styling**          | Tailwind CSS 4, Lucide React     |
 | **State Management** | Zustand                          |
 | **Database**         | Turso (libSQL)                   |

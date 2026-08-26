@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { desc } from 'drizzle-orm';
 import { ArrowLeft, Calendar, ChevronRight, Package, User } from 'lucide-react';
 import Link from 'next/link';
+import MobileNav from '@/components/MobileNav';
 
 export default async function HistoryPage() {
 	const allOrders = await db.select().from(orders).orderBy(desc(orders.createdAt));
@@ -17,13 +18,13 @@ export default async function HistoryPage() {
 				<h1 className='text-xl font-bold text-slate-900 dark:text-white'>Order History</h1>
 			</header>
 
-			<div className='p-4 flex flex-col gap-3'>
+			<div className='p-4 pb-24 flex flex-col gap-3'>
 				{allOrders.length > 0 ? (
 					allOrders.map((order) => (
 						<Link
 							key={order.id}
 							href={`/history/${order.id}`}
-							className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm active:scale-95 transition-all flex items-center justify-between group'
+							className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm active:scale-[0.98] transition-all flex items-center justify-between group'
 						>
 							<div className='flex flex-col gap-2'>
 								<div className='flex items-center gap-2 text-slate-400'>
@@ -60,6 +61,7 @@ export default async function HistoryPage() {
 					</div>
 				)}
 			</div>
+			<MobileNav />
 		</main>
 	);
 }
