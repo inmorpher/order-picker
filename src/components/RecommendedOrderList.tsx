@@ -3,7 +3,7 @@
 import { useRecommendedOrderStore } from '@/store/useRecommendedOrderStore';
 import { ChevronRight, Minus, Plus, Search, X } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useMemo, useState } from 'react';
 
 interface Item {
 	id: number;
@@ -15,12 +15,7 @@ interface Item {
 
 export default function RecommendedOrderList({ items }: { items: Item[] }) {
 	const [search, setSearch] = useState('');
-	const isHydrated = useSyncExternalStore(
-		() => () => {},
-		() => true,
-		() => false,
-	);
-	const { deliveryDays, onHand, selectedItems, setDeliveryDays, setOnHand, setSelected } = useRecommendedOrderStore();
+	const { deliveryDays, onHand, selectedItems, hasHydrated, setDeliveryDays, setOnHand, setSelected } = useRecommendedOrderStore();
 
 	const recommendations = useMemo(
 		() =>
@@ -48,7 +43,7 @@ export default function RecommendedOrderList({ items }: { items: Item[] }) {
 		setOnHand(id, Math.max(0, (onHand[id] ?? 0) + amount));
 	};
 
-	if (!isHydrated) return null;
+	if (!hasHydrated) return null;
 
 	return (
 		<div className='flex flex-col gap-4 pb-32'>
