@@ -6,7 +6,7 @@ import { useRecommendedOrderStore } from '@/store/useRecommendedOrderStore';
 import { ArrowLeft, CheckCircle2, Loader2, Minus, Plus, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useMemo, useState } from 'react';
 
 interface Item {
 	externalId: string;
@@ -17,16 +17,9 @@ interface Item {
 
 export default function RecommendedOrderSummaryClient({ items }: { items: Item[] }) {
 	const router = useRouter();
-	const isHydrated = useSyncExternalStore(
-		() => () => {},
-		() => true,
-		() => false,
-	);
-	const [ordererName, setOrdererName] = useState(() => typeof window === 'undefined' ? '' : localStorage.getItem('last-orderer-name') ?? '');
+	const [ordererName, setOrdererName] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [error, setError] = useState('');
-	const [removedItem, setRemovedItem] = useState<string | null>(null);
-	const { deliveryDays, onHand, selectedItems, quantityOverrides, setDeliveryDays, setSelected, setQuantityOverride, reset } = useRecommendedOrderStore();
+	const { deliveryDays, onHand, selectedItems, quantityOverrides, hasHydrated, setDeliveryDays, setSelected, setQuantityOverride, reset } = useRecommendedOrderStore();
 
 	const orderItems = useMemo(
 		() =>
@@ -76,7 +69,7 @@ export default function RecommendedOrderSummaryClient({ items }: { items: Item[]
 		}
 	};
 
-	if (!isHydrated) return null;
+	if (!hasHydrated) return null;
 
 	return (
 		<div className='flex flex-col gap-6 pb-8'>
